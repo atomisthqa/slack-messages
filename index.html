@@ -1,0 +1,352 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@atomist/slack-messages</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@atomist/slack-messages</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> @atomist/slack-messages</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="-atomist-slack-messages">@atomist/slack-messages</h1>
+				<p><a href="https://travis-ci.org/atomist/slack-messages"><img src="https://travis-ci.org/atomist/slack-messages.svg?branch=master" alt="Build Status"></a></p>
+				<p><a href="https://nodejs.org/" title="Node.js">Node</a> module <a href="https://www.npmjs.com/package/@atomist/slack-messages" title="@atomist/slack-messages Node Module"><code>@atomist/slack-messages</code></a> helps
+					rendering well formatted <a href="https://join.atomist.com">Slack</a> messages sent
+					by <a href="https://atomist.github.io/slack-messages/" title="@atomist/slack-messages TypeDoc"><code>@atomist</code></a> from your <a href="https://github.com/atomist/rug" title="Atomist Rug">Rug</a> event and command
+					handlers. This module also lets you add actions to your <a href="https://join.atomist.com">Slack</a>
+					messages that execute <a href="https://github.com/atomist/rug" title="Atomist Rug">Rug</a> instructions.  See
+				the <a href="https://atomist.github.io/slack-messages/" title="@atomist/slack-messages TypeDoc">reference documentation</a> for more information.</p>
+				<h2 id="using">Using</h2>
+				<p>Construct a message as a plain map following the Slack message formatting API:</p>
+				<p><a href="https://api.slack.com/docs/message-formatting">https://api.slack.com/docs/message-formatting</a></p>
+				<pre><code class="lang-typescript"><span class="hljs-comment">// A very simple message</span>
+<span class="hljs-keyword">const</span> msg: SlackMessage = { text: <span class="hljs-string">"Simple message"</span> };
+</code></pre>
+				<pre><code class="lang-typescript"><span class="hljs-comment">// Here is an example of a message with a Slack action (button).</span>
+<span class="hljs-keyword">const</span> msg: SlackMessage = {
+                text: <span class="hljs-string">`<span class="hljs-subst">${url(user.url, "@" + user.name)}</span> opened issue: <span class="hljs-subst">${url(issue.url, issue.title)}</span>`</span>,
+                attachments: [
+                    {
+                        text: <span class="hljs-built_in">escape</span>(issue.body),
+                        fallback: <span class="hljs-built_in">escape</span>(issue.title),
+                        mrkdwn_in: [<span class="hljs-string">"text"</span>],
+                        actions: [
+                        {
+                            text: <span class="hljs-string">"Close issue"</span>,
+                            <span class="hljs-keyword">type</span>: <span class="hljs-string">"button"</span>,
+                            name: <span class="hljs-string">"closeissue"</span>,
+                            value: <span class="hljs-string">"somebuttonid"</span>,
+                        },
+                    ],
+                    callback_id: <span class="hljs-string">"cllbck1"</span>,
+                    },
+                ],
+            };
+</code></pre>
+				<p>And then render the message with SlackMessages.render.  This will construct a JSON string representation of the message:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { render } <span class="hljs-keyword">from</span> <span class="hljs-string">"@atomist/slack-messages/SlackMessages"</span>
+
+<span class="hljs-keyword">const</span> renderedMsg = render(msg);
+</code></pre>
+				<p>Or to produce a pretty JSON string:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> renderedMsg = render(msg, <span class="hljs-literal">true</span>);
+</code></pre>
+				<p>This will produce the following JSON string (pretty version):</p>
+				<pre><code class="lang-json">{
+    <span class="hljs-attr">"text"</span>: <span class="hljs-string">"&lt;https://github.com/anna|@anna&gt; opened issue: &lt;https://github.com/someorg/somerepo/issues/484|This issue title contains &amp;lt;unsafe&amp;gt; characters and &amp;amp;&gt;"</span>,
+    <span class="hljs-attr">"attachments"</span>: [
+        {
+            <span class="hljs-attr">"text"</span>: <span class="hljs-string">"This is a very important issue with body containing &amp;lt;unsafe&amp;gt; characters and even &amp;amp;"</span>,
+            <span class="hljs-attr">"fallback"</span>: <span class="hljs-string">"This issue title contains &amp;lt;unsafe&amp;gt; characters and &amp;amp;"</span>,
+            <span class="hljs-attr">"mrkdwn_in"</span>: [
+                <span class="hljs-string">"text"</span>
+            ],
+            <span class="hljs-attr">"callback_id"</span>: <span class="hljs-string">"cllbck1"</span>,
+            <span class="hljs-attr">"actions"</span>: [
+                {
+                    <span class="hljs-attr">"text"</span>: <span class="hljs-string">"Close issue"</span>,
+                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"button"</span>,
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"rug"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"somebuttonid"</span>
+                }
+            ]
+        }
+    ]
+}
+</code></pre>
+				<p>Note that the <code>render</code> function will automatically assign a unique <code>callback_id</code> to each attachments that has actions.
+				But, if you provide your custom <code>callback_id</code> it will be preserved as is.</p>
+				<h3 id="additional-helper-functions-">Additional helper functions:</h3>
+				<h4 id="special-characters">Special characters</h4>
+				<pre><code class="lang-typescript"><span class="hljs-built_in">escape</span>(<span class="hljs-string">"Slack requires you to escape &lt;, &gt; and &amp;"</span>);
+  =&gt; <span class="hljs-string">"Slack requires you to escape &amp;lt;, &amp;gt; and &amp;amp;"</span>
+</code></pre>
+				<h4 id="links">Links</h4>
+				<pre><code class="lang-typescript"><span class="hljs-comment">// Simple link</span>
+url(<span class="hljs-string">"https://www.atomist.com"</span>);
+  =&gt; <span class="hljs-string">"&lt;https://www.atomist.com&gt;"</span>
+
+<span class="hljs-comment">// Link with label</span>
+url(<span class="hljs-string">"https://www.atomist.com"</span>, <span class="hljs-string">"atomist"</span>);
+  =&gt; <span class="hljs-string">"&lt;https://www.atomist.com|atomist&gt;"</span>
+</code></pre>
+				<h4 id="user-channel-links">User &amp; channel links</h4>
+				<pre><code class="lang-typescript"><span class="hljs-comment">// @some-user (Slack will display user name for provided user ID)</span>
+user(<span class="hljs-string">"U123"</span>);
+  =&gt; <span class="hljs-string">"&lt;@U123&gt;"</span>
+
+<span class="hljs-comment">// #some-channel (Slack will display channel name for provided channel ID)</span>
+channel(<span class="hljs-string">"C123"</span>);
+  =&gt; <span class="hljs-string">"&lt;#C123&gt;"</span>
+</code></pre>
+				<h4 id="special-variables">Special variables</h4>
+				<pre><code class="lang-typescript"><span class="hljs-comment">// @channel</span>
+atChannel();
+  =&gt; <span class="hljs-string">"&lt;!channel&gt;"</span>
+
+<span class="hljs-comment">// @here</span>
+atHere();
+  =&gt; <span class="hljs-string">"&lt;!here&gt;"</span>
+
+<span class="hljs-comment">// @everyone</span>
+atEveryone();
+  =&gt; <span class="hljs-string">"&lt;!everyone&gt;"</span>
+</code></pre>
+				<h4 id="emoji">Emoji</h4>
+				<pre><code class="lang-typescript">emoji(<span class="hljs-string">"smile"</span>);
+  =&gt; <span class="hljs-string">":smile:"</span>;
+</code></pre>
+				<h4 id="markdown">Markdown</h4>
+				<p>Slack will render markdown if field where markdown is present is included in <code>mrkdwn_in</code> array.</p>
+				<pre><code class="lang-typescript">bold(<span class="hljs-string">"This text will appear bold"</span>);
+  =&gt; <span class="hljs-string">"*This text will appear bold*"</span>
+
+italic(<span class="hljs-string">"This text will appear italic"</span>);
+  =&gt; <span class="hljs-string">"_This text will appear italic_"</span>
+
+strikethrough(<span class="hljs-string">"This text will appear strike-through"</span>);
+  =&gt; <span class="hljs-string">"~This text will appear strike-through~"</span>
+
+<span class="hljs-comment">// Single line code block</span>
+codeLine(<span class="hljs-string">"var a = new A();"</span>);
+  =&gt;  <span class="hljs-string">"`var a = new A();`"</span>
+
+<span class="hljs-comment">// Multi line code block</span>
+codeBlock(<span class="hljs-string">"var a = new A();\nvar b = new B();"</span>);
+  =&gt; <span class="hljs-string">"```var a = new A();\nvar b = new B();```"</span>
+
+<span class="hljs-comment">// List</span>
+listItem(<span class="hljs-string">"Item 1"</span>);
+  =&gt; <span class="hljs-string">"• Item 1"</span>
+</code></pre>
+				<h3 id="github-to-slack-markdown-conversion">GitHub to Slack markdown conversion</h3>
+				<p>GitHub and Slack markdown are different enough to make your GitHub issues or GitHub PRs look quite bad in Slack by default. You can use the <code>githubToSlack</code> function from <code>Markdown</code> to convert text that uses GitHub markdown to text that will look good in Slack:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { githubToSlack } <span class="hljs-keyword">from</span> <span class="hljs-string">"@atomist/slack-messages/Markdown"</span>
+
+githubToSlack(<span class="hljs-string">"* list item 1\n* list item 2\n\**some bold text** and *some italic text* with a link [click here](http://someplace.com)"</span>);
+  =&gt; <span class="hljs-string">"• list item 1\n• list item 2\n*some bold text* and _some italic text_ with a link &lt;http://someplace.com|click here&gt;"</span>
+</code></pre>
+				<h2 id="support">Support</h2>
+				<p>General support questions should be discussed in the <code>#support</code>
+					channel on our community Slack team
+				at <a href="https://join.atomist.com">atomist-community.slack.com</a>.</p>
+				<p>If you find a problem, please create an <a href="https://github.com/atomist/slack-messages/issues">issue</a>.</p>
+				<h2 id="development">Development</h2>
+				<p>You will need to install <a href="https://nodejs.org/" title="Node.js">node</a> to build and test this project.</p>
+				<h3 id="build-and-test">Build and Test</h3>
+				<table>
+					<thead>
+						<tr>
+							<th>Command</th>
+							<th>Reason</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><code>npm install</code></td>
+							<td>to install all the required packages</td>
+						</tr>
+						<tr>
+							<td><code>npm run lint</code></td>
+							<td>to run tslint against the TypeScript</td>
+						</tr>
+						<tr>
+							<td><code>npm run compile</code></td>
+							<td>to compile all TypeScript into JavaScript</td>
+						</tr>
+						<tr>
+							<td><code>npm test</code></td>
+							<td>to run tests and ensure everything is working</td>
+						</tr>
+						<tr>
+							<td><code>npm run autotest</code></td>
+							<td>run tests continuously (you may also need to run <code>tsc -w</code>)</td>
+						</tr>
+						<tr>
+							<td><code>npm run clean</code></td>
+							<td>remove stray compiled JavaScript files and build directory</td>
+						</tr>
+					</tbody>
+				</table>
+				<h3 id="release">Release</h3>
+				<p>To create a new release of the project, simply push a tag of the form
+					<code>M.N.P</code> where <code>M</code>, <code>N</code>, and <code>P</code> are integers that form the next
+					appropriate <a href="http://semver.org">semantic version</a> for release.  The version in
+					the package.json is replaced by the build and is totally ignored!  For
+				example:</p>
+				<pre><code><span class="hljs-meta">$</span><span class="bash"> git tag -a 1.2.</span>
+<span class="hljs-meta">$</span><span class="bash"> git push --tags</span>
+</code></pre><p>The Travis CI build (see badge at the top of this page) will publish
+					the NPM module and automatically create a GitHub release using the tag
+					name for the release and the comment provided on the annotated tag as
+				the contents of the release notes.</p>
+				<hr>
+				<p>Created by <a href="https://www.atomist.com/">Atomist</a>.
+				Need Help?  <a href="https://join.atomist.com">Join our Slack team</a>.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_markdown_.html">"<wbr>Markdown"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_rugmessages_.html">"<wbr>Rug<wbr>Messages"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_slackmessages_.html">"<wbr>Slack<wbr>Messages"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
